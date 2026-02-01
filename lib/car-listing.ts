@@ -425,3 +425,18 @@ export const POPULAR_CITIES = [
   'Surat',
   'Vadodara',
 ];
+
+/**
+ * Get car listings with dealer verification status
+ */
+export async function getCarListingsWithDealerStatus() {
+  const { data, error } = await supabase
+    .from('car_listings')
+    .select(`*, dealer_profiles(verified)`) // join dealer_profiles
+    .eq('dealer_profiles.status', 'approved');
+  if (error) throw new Error(error.message);
+  return (data || []).map((car: any) => ({
+    ...car,
+    dealer_verified: car.dealer_profiles?.verified || false,
+  }));
+}

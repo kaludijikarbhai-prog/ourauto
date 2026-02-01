@@ -17,7 +17,7 @@ export default function Home() {
           return;
         }
 
-        const { supabase } = await import('@/lib/supabase');
+        const { supabase } = await import('@/lib/supabase-client');
         
         // Try a simple auth check instead of table query
         const { error: authError } = await supabase.auth.getSession();

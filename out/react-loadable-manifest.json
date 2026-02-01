@@ -1,14 +1,22 @@
 {
-  "app/dealer/layout.tsx -> @/lib/supabase": {
-    "id": "app/dealer/layout.tsx -> @/lib/supabase",
+  "app/dealer/layout.tsx -> @/lib/supabase-client": {
+    "id": 9203,
     "files": [
-      "static/chunks/_app-pages-browser_lib_supabase_ts.js"
+      "static/chunks/4033-6f64c07ed11861ac.js",
+      "static/chunks/9203.7590f7167f4971fb.js"
     ]
   },
-  "app/page.tsx -> @/lib/supabase": {
-    "id": "app/page.tsx -> @/lib/supabase",
+  "app/page.tsx -> @/lib/supabase-client": {
+    "id": 9203,
     "files": [
-      "static/chunks/_app-pages-browser_lib_supabase_ts.js"
+      "static/chunks/4033-6f64c07ed11861ac.js",
+      "static/chunks/9203.7590f7167f4971fb.js"
+    ]
+  },
+  "components/car-listing/AddCarForm.tsx -> @/lib/supabase": {
+    "id": 2141,
+    "files": [
+      "static/chunks/2141.fd6532e1aa2351a0.js"
     ]
   }
 }

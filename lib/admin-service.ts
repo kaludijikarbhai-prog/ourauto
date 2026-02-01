@@ -3,7 +3,7 @@ import { supabase } from "./supabase"
 /* ============== AUTH ============== */
 
 export const isAdmin = async () => {
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase().auth.getUser()
   if (!user) return false
   
   const { data: profile } = await supabase
@@ -18,22 +18,36 @@ export const isAdmin = async () => {
 /* ============== USERS ============== */
 
 export const getAllUsers = () =>
-  supabase.from("profiles").select("*")
+  supabase().from("profiles").select("*")
 
 export const banUser = (id: string) =>
-  supabase.from("profiles").update({ banned: true }).eq("id", id)
+  supabase().from("profiles").update({ banned: true }).eq("id", id)
 
 export const unbanUser = (id: string) =>
-  supabase.from("profiles").update({ banned: false }).eq("id", id)
+  supabase().from("profiles").update({ banned: false }).eq("id", id)
 
 /* ============== DEALERS ============== */
 
 export const getDealers = () => {
-  return supabase.from("profiles").select("*").eq("role", "dealer")
+  return supabase().from("profiles").select("*").eq("role", "dealer")
 }
 
-export const approveDealer = (id: string) =>
-  supabase.from("profiles").update({ approved: true }).eq("id", id)
+
+export async function getAllDealerProfiles() {
+  const { data, error } = await supabase().from("dealer_profiles").select("*", { count: "exact" }).order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function approveDealer(id: string) {
+  const { error } = await supabase().from("dealer_profiles").update({ status: "approved", verified: true }).eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+export async function rejectDealer(id: string) {
+  const { error } = await supabase().from("dealer_profiles").update({ status: "rejected", verified: false }).eq("id", id);
+  if (error) throw new Error(error.message);
+}
 
 /* ============== CARS ============== */
 

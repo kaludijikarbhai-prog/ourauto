@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getCarListing, updateCarListing, deleteCarListing, CarListing } from '@/lib/car-listing';
 import { getUser } from '@/lib/auth';
+import OfferModal from '../../../components/OfferModal';
 
 export default function CarDetailsPage() {
   const params = useParams();
@@ -16,6 +17,7 @@ export default function CarDetailsPage() {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
 
+  const [offerModalOpen, setOfferModalOpen] = useState(false);
   useEffect(() => {
     const loadData = async () => {
       const currentUser = await getUser();
@@ -35,6 +37,8 @@ export default function CarDetailsPage() {
     if (!car) return;
 
     try {
+    if (loading) return <div className="p-8 text-white">Loading...</div>;
+    if (!car) return <div className="p-8 text-white">Car not found.</div>;
       setError('');
       const result = await updateCarListing(car.id, { status: newStatus });
       if (result.error) {
@@ -249,6 +253,25 @@ export default function CarDetailsPage() {
                 >
                   {deleting ? 'Deleting...' : 'Delete Listing'}
                 </button>
+
+                {!isOwner && user && (
+                  <div className="mb-6">
+                    <button
+                      className="px-6 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700"
+                      onClick={() => setOfferModalOpen(true)}
+                    >
+                      Make Offer
+                    </button>
+                  </div>
+                )}
+                <OfferModal
+                  isOpen={offerModalOpen}
+                  onClose={() => setOfferModalOpen(false)}
+                  carId={car.id}
+                  sellerId={car.user_id}
+                  buyerId={user?.id || ""}
+                  onOfferCreated={() => {}}
+                />
 
                 {error && (
                   <p className="text-red-600 text-sm p-3 bg-red-50 rounded">

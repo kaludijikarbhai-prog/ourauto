@@ -2,7 +2,7 @@
  * Chat request service (masked contact between buyer and seller)
  */
 
-import { supabase } from './supabase';
+import { supabase } from './supabase-client';
 import { getUser } from './auth';
 import { ChatRequest, ChatRequestWithCar, ApiResponse } from './types';
 import { generateMaskedPhone } from './utils';

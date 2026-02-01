@@ -98,3 +98,12 @@ export async function getUserPhone(): Promise<string | null> {
   const user = await getUser();
   return user?.phone || null;
 }
+
+/**
+ * Get user ID
+ */
+export async function getUserId(): Promise<string> {
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user?.id) throw new Error("Not authenticated");
+  return data.user.id;
+}

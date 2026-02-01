@@ -16,7 +16,7 @@ export default function DealerLayout({ children }: { children: React.ReactNode }
 
   const checkAuthorization = async () => {
     try {
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/supabase-client');
       const { data: { user: currentUser }, error } = await supabase.auth.getUser();
       
       if (error || !currentUser) {

@@ -14,6 +14,18 @@ export interface Profile {
   created_at: string;
 }
 
+export interface DealerProfile {
+  id: string;
+  user_id: string;
+  shop_name: string;
+  phone: string;
+  city: string;
+  document_url: string;
+  status: string;
+  verified: boolean;
+  created_at: string;
+}
+
 // ============ CARS ============
 export type CarStatus = 'draft' | 'live' | 'sold';
 

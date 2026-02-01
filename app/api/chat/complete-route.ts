@@ -8,7 +8,9 @@
  * GET /api/chat/:id/masked-numbers - Get masked phone numbers
  */
 
-import { supabase } from '@/lib/supabase';
+import { createSupabaseServer } from '@/lib/supabase-server';
+
+const supabase = createSupabaseServer();
 import { NextRequest, NextResponse } from 'next/server';
 
 function maskPhone(phone: string): string {
@@ -105,11 +107,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Get car and owner
-    const { data: car, error: carError } = await supabase
+
+    import type { Database } from '@/lib/database.types';
+    type Car = Database['public']['Tables']['cars']['Row'] & { owner?: { phone?: string } };
+    const { data, error: carError } = await supabase
       .from('cars')
       .select('*, owner:profiles!owner_id(*)')
       .eq('id', carId)
       .single();
+    const car = data as Car;
 
     if (carError || !car) {
       return NextResponse.json(

@@ -1,5 +1,5 @@
-import { supabase } from './supabase';
-import { getUser } from './auth';
+import { supabase } from './supabase-client';
+import { getUser, getUserId } from './auth';
 import type { DealerLeadWithDetails, LeadStatus } from './types';
 
 // Re-export types
@@ -18,7 +18,6 @@ export async function getDealerLeads(): Promise<DealerLeadWithDetails[]> {
     // Get dealer's cars first
     const { data: dealerCars, error: carsError } = await supabase
       .from('cars')
-      .select('id')
       .eq('user_id', user.id);
 
     if (carsError) {
@@ -34,7 +33,6 @@ export async function getDealerLeads(): Promise<DealerLeadWithDetails[]> {
     // Get leads for dealer's cars with car details
     const { data: leads, error: leadsError } = await supabase
       .from('dealer_leads')
-      .select('*')
       .in('car_id', carIds)
       .order('created_at', { ascending: false });
 
@@ -52,10 +50,7 @@ export async function getDealerLeads(): Promise<DealerLeadWithDetails[]> {
     const [{ data: carsData }, { data: inspectionsData }] = await Promise.all([
       supabase.from('cars').select('id, owner_id, title, brand, model, year, price, city, km, status, created_at').in('id', Array.from(carIdSet)),
       inspectionIdSet.size > 0
-        ? supabase
-            .from('inspections')
-            .select('id, date, time_slot, city')
-            .in('id', Array.from(inspectionIdSet))
+        ? supabase.from('inspections').select('id, date, time_slot, city').in('id', Array.from(inspectionIdSet))
         : Promise.resolve({ data: [] }),
     ]);
 
@@ -375,4 +370,34 @@ export async function getDealerInspections() {
     console.error('Get dealer inspections error:', error);
     return [];
   }
+}
+
+/**
+ * Upload dealer document
+ */
+export async function uploadDealerDocument(file: File): Promise<string> {
+  const userId = await getUserId();
+  const fileExt = file.name.split('.').pop();
+  const filePath = `dealer-docs/${userId}-${Date.now()}.${fileExt}`;
+  const { data, error } = await supabase.storage.from("dealer-docs").upload(filePath, file);
+  if (error) throw new Error(error.message);
+  const { publicUrl } = supabase.storage.from("dealer-docs").getPublicUrl(filePath).data;
+  return publicUrl;
+}
+
+/**
+ * Create dealer profile
+ */
+export async function createDealerProfile({ shop_name, phone, city, document_url }: { shop_name: string, phone: string, city: string, document_url: string }) {
+  const userId = await getUserId();
+  const { error } = await supabase.from("dealer_profiles").insert({
+    user_id: userId,
+    shop_name,
+    phone,
+    city,
+    document_url,
+    status: "pending",
+    verified: false,
+  });
+  if (error) throw new Error(error.message);
 }
