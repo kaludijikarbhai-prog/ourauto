@@ -1,0 +1,30 @@
+{
+  "appId": "com.ourauto.app",
+  "appName": "OurAuto",
+  "webDir": "out",
+  "bundledWebRuntime": false,
+  "cordova": {},
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "launchAutoHide": true,
+      "backgroundColor": "#ffffff",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP"
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
+    }
+  },
+  "server": {
+    "url": "http://localhost:3000",
+    "cleartext": [
+      "localhost",
+      "127.0.0.1"
+    ]
+  }
+}

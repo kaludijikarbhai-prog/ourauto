@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST="{\"app/dealer/layout.tsx -> @/lib/supabase\":{\"id\":\"app/dealer/layout.tsx -> @/lib/supabase\",\"files\":[\"static/chunks/_app-pages-browser_lib_supabase_ts.js\"]},\"app/page.tsx -> @/lib/supabase\":{\"id\":\"app/page.tsx -> @/lib/supabase\",\"files\":[\"static/chunks/_app-pages-browser_lib_supabase_ts.js\"]}}"
