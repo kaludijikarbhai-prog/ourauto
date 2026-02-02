@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getDealerCars } from '@/lib/dealer';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase-client';
 import { Car } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
 

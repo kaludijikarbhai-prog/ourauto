@@ -38,7 +38,19 @@ export default function BookInspectionPage() {
 
   const loadCars = async () => {
     setLoading(true);
-    const result = await getUserCarsForInspection();
+    // Get userId from Supabase auth using createBrowserClient
+    const { createBrowserClient } = await import('@supabase/auth-helpers-nextjs');
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabase = createBrowserClient(supabaseUrl, supabaseKey);
+    const { data } = await supabase.auth.getUser();
+    const userId = data.user?.id;
+    if (!userId) {
+      setError('User not logged in');
+      setLoading(false);
+      return;
+    }
+    const result = await getUserCarsForInspection(userId);
     setCars(result);
     setLoading(false);
   };
@@ -62,7 +74,6 @@ export default function BookInspectionPage() {
 
     setAvailabilityCheck('Checking availability...');
     const available = await isSlotAvailable(
-      formData.city,
       formData.date,
       formData.timeSlot
     );
@@ -101,18 +112,15 @@ export default function BookInspectionPage() {
 
     try {
       setSubmitting(true);
-      const result = await bookInspection({
+
+      await bookInspection({
         car_id: formData.carId,
         city: formData.city,
         date: formData.date,
         time_slot: formData.timeSlot,
       });
 
-      if (result.error) {
-        setError(result.error);
-      } else {
-        router.push('/my-inspections');
-      }
+      router.push('/my-inspections');
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Failed to book inspection'

@@ -1,0 +1,1 @@
+"use strict";exports.id=1579,exports.ids=[1579],exports.modules={1579:(s,I,i)=>{i.d(I,{supabase:()=>e});let e=(0,i(5157).eI)("https://fuyalwhqewztcbgqboqv.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1eWFsd2hqZXd6dGNiZ3Fib3F2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4ODk2MTYsImV4cCI6MjA4NTQ2NTYxNn0.srvlWyAES_AU8NnoBONFMXhY9dpEcN_itFOv3fDZuCI")}};

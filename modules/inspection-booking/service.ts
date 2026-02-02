@@ -4,7 +4,7 @@
  * Core functions for managing inspections
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase-server';
 import type { InspectionBooking, InspectionReport } from './types';
 
 export async function bookInspection(
@@ -15,6 +15,7 @@ export async function bookInspection(
   notes?: string
 ): Promise<InspectionBooking | null> {
   // Using supabase directly
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('inspection_bookings')
     .insert([
@@ -39,6 +40,7 @@ export async function bookInspection(
 
 export async function getBooking(id: string): Promise<InspectionBooking | null> {
   // Using supabase directly
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('inspection_bookings')
     .select('*')
@@ -55,6 +57,7 @@ export async function getBooking(id: string): Promise<InspectionBooking | null> 
 
 export async function getBookingsByListing(listingId: string): Promise<InspectionBooking[]> {
   // Using supabase directly
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('inspection_bookings')
     .select('*')
@@ -72,8 +75,8 @@ export async function updateBookingStatus(
   id: string,
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled'
 ): Promise<InspectionBooking | null> {
-  // Using supabase directly
-  const { data, error } = await supabase
+
+  const { data, error } = await supabaseServer
     .from('inspection_bookings')
     .update({ status } as never)
     .eq('id', id)
@@ -92,8 +95,7 @@ export async function submitReport(
   inspectorId: string,
   report: Omit<InspectionReport, 'id' | 'bookingId' | 'inspectorId' | 'createdAt'>
 ): Promise<InspectionReport | null> {
-  // Using supabase directly
-  const { data, error } = await supabase
+  const { data, error } = await supabaseServer
     .from('inspection_reports')
     .insert([
       {

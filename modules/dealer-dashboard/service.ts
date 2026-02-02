@@ -4,22 +4,20 @@
  * Core functions for dealer operations
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase-server';
 import type { DealerProfile, DealerStats } from './types';
 
+
 export async function getDealerProfile(userId: string): Promise<DealerProfile | null> {
-  // Using supabase directly
-  const { data, error } = await supabase
+  const { data, error } = await supabaseServer
     .from('dealer_profiles')
     .select('*')
     .eq('user_id', userId)
     .single();
-
   if (error) {
     console.error('Error fetching dealer profile:', error);
     return null;
   }
-
   return data;
 }
 
@@ -27,7 +25,8 @@ export async function createDealerProfile(
   userId: string,
   profile: Omit<DealerProfile, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
 ): Promise<DealerProfile | null> {
-  // Using supabase directly
+
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('dealer_profiles')
     .insert([{ user_id: userId, ...profile } as never])

@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase } from './supabase-client';
 import { getUser } from './auth';
 
 export interface ValuationInput {
@@ -248,6 +248,7 @@ export async function saveValuation(
       throw new Error('User not authenticated');
     }
 
+    // use supabase-client for client-side usage
     const { data, error } = await supabase
       .from('valuations')
       .insert([

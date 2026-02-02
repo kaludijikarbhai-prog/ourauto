@@ -4,11 +4,12 @@
  * Core functions for managing vehicle listings
  */
 
-import { supabase } from '@/lib/supabase';
+
+import { supabaseServer } from '@/lib/supabase-server';
 import type { CarListing, ListingFilter } from './types';
 
-export async function getListings(filter?: ListingFilter): Promise<CarListing[]> {
-  // Using supabase directly
+export async function getListings(filter: ListingFilter): Promise<CarListing[]> {
+  const supabase = supabaseServer;
   let query = supabase.from('car_listings').select('*');
 
   if (filter?.make) {
@@ -38,7 +39,7 @@ export async function getListings(filter?: ListingFilter): Promise<CarListing[]>
 }
 
 export async function getListingById(id: string): Promise<CarListing | null> {
-  // Using supabase directly
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('car_listings')
     .select('*')
@@ -57,7 +58,7 @@ export async function createListing(
   dealerId: string,
   listing: Omit<CarListing, 'id' | 'dealerId' | 'createdAt' | 'updatedAt' | 'views'>
 ): Promise<CarListing | null> {
-  // Using supabase directly
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('car_listings')
     .insert([{ dealer_id: dealerId, ...listing } as never])
@@ -72,7 +73,7 @@ export async function createListing(
 }
 
 export async function updateListing(id: string, updates: Partial<CarListing>): Promise<CarListing | null> {
-  // Using supabase directly
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('car_listings')
     .update(updates as never)
@@ -88,7 +89,7 @@ export async function updateListing(id: string, updates: Partial<CarListing>): P
 }
 
 export async function deleteListing(id: string): Promise<void> {
-  // Using supabase directly
+  const supabase = supabaseServer;
   const { error } = await supabase
     .from('car_listings')
     .delete()

@@ -25,7 +25,19 @@ export default function MyInspectionsPage() {
 
   const loadInspections = async () => {
     setLoading(true);
-    const result = await getUserInspections();
+    // Get userId from Supabase auth
+    const { createBrowserClient } = await import('@supabase/auth-helpers-nextjs');
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabase = createBrowserClient(supabaseUrl, supabaseKey);
+    const { data } = await supabase.auth.getUser();
+    const userId = data.user?.id;
+    if (!userId) {
+      setError('User not logged in');
+      setLoading(false);
+      return;
+    }
+    const result = await getUserInspections(userId);
     setInspections(result);
     setLoading(false);
   };
@@ -34,22 +46,22 @@ export default function MyInspectionsPage() {
     inspectionId: string,
     newStatus: 'pending' | 'confirmed' | 'completed'
   ) => {
-    const result = await updateInspectionStatus(inspectionId, newStatus);
-    if (result.error) {
-      setError(result.error);
-    } else {
+    try {
+      await updateInspectionStatus(inspectionId, newStatus);
       await loadInspections();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update status');
     }
   };
 
   const handleCancel = async (inspectionId: string) => {
     if (!confirm('Are you sure you want to cancel this inspection?')) return;
 
-    const result = await cancelInspection(inspectionId);
-    if (result.error) {
-      setError(result.error);
-    } else {
+    try {
+      await cancelInspection(inspectionId);
       await loadInspections();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to cancel inspection');
     }
   };
 
@@ -174,7 +186,7 @@ export default function MyInspectionsPage() {
                       Booked
                     </p>
                     <p className="text-gray-900">
-                      {formatDate(inspection.created_at)}
+                      {formatDate(inspection.created_at ?? '')}
                     </p>
                   </div>
                 </div>

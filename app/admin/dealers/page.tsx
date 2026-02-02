@@ -1,46 +1,81 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getDealers, approveDealer } from "@/lib/admin-service"
+
+type Dealer = {
+  id: string
+  full_name: string | null
+  email: string | null
+  phone: string | null
+  verified: boolean | null
+}
 
 export default function DealersPage() {
-  const [dealers, setDealers] = useState<any[]>([])
+  const [dealers, setDealers] = useState<Dealer[]>([])
+  const [loading, setLoading] = useState(true)
 
+  // 🔥 fetch dealers from API
   useEffect(() => {
-    load()
+    fetch("/api/admin/dealers")
+      .then(res => res.json())
+      .then(data => {
+        setDealers(data)
+        setLoading(false)
+      })
   }, [])
 
-  async function load() {
-    const { data } = await getDealers()
-    setDealers(data || [])
+  // 🔥 verify dealer
+  async function verifyDealer(id: string) {
+    await fetch("/api/admin/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: id,
+        verified: true,
+      }),
+    })
+
+    // refresh list
+    setDealers(prev =>
+      prev.map(d =>
+        d.id === id ? { ...d, verified: true } : d
+      )
+    )
   }
 
-  async function approve(id: string) {
-    await approveDealer(id)
-    load()
-  }
+  if (loading) return <p className="p-6">Loading dealers...</p>
 
   return (
-    <div>
-      <h1 className="text-xl font-bold mb-6">🚗 Dealers</h1>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Dealer Verification</h1>
 
-      {dealers.map((d) => (
-        <div
-          key={d.id}
-          className="flex justify-between bg-white p-4 rounded shadow mb-3"
-        >
-          <span>{d.email}</span>
+      <div className="space-y-3">
+        {dealers.map(d => (
+          <div
+            key={d.id}
+            className="flex justify-between items-center border rounded p-3"
+          >
+            <div>
+              <p className="font-semibold">{d.full_name}</p>
+              <p className="text-sm text-gray-500">{d.email}</p>
+              <p className="text-sm text-gray-500">{d.phone}</p>
+            </div>
 
-          {!d.approved && (
-            <button
-              onClick={() => approve(d.id)}
-              className="bg-green-600 text-white px-3 py-1 rounded"
-            >
-              Approve
-            </button>
-          )}
-        </div>
-      ))}
+            {d.verified ? (
+              <span className="text-green-600 font-semibold">
+                Verified ✓
+              </span>
+            ) : (
+              <button
+                onClick={() => verifyDealer(d.id)}
+                className="bg-blue-600 text-white px-3 py-1 rounded"
+              >
+                Verify
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

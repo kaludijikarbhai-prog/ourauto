@@ -2,7 +2,8 @@
 
 "use client";
 import { useState } from "react";
-import { createBrowserClient } from "@supabase/ssr";
+import { supabase } from "@/lib/supabase-client";
+// ...existing code...
 import type { Database } from "@/lib/database.types";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
@@ -27,23 +28,23 @@ export default function OfferModal({
   const [price, setPrice] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const { error } = await supabase.from("offers").insert([
-      {
-        car_id: carId,
-        seller_id: sellerId,
-        buyer_id: buyerId,
-        offer_price: price,
-      },
-    ]);
+    type OfferInsert = Database["public"]["Tables"]["offers"]["Insert"];
+    const offerData: OfferInsert = {
+      car_id: carId,
+      seller_id: sellerId,
+      buyer_id: buyerId,
+      price: price,
+      message: null,
+    };
+    const { error } = await supabase
+      .from("offers")
+      .insert([offerData as Database["public"]["Tables"]["offers"]["Insert"]]);
     setLoading(false);
     if (error) {
       setError(error.message);

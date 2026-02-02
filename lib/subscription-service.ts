@@ -3,7 +3,7 @@
  * Free / Pro / Premium with different features
  */
 
-import { supabase } from './supabase';
+import { supabase } from './supabase-client';
 
 export type SubscriptionTier = 'free' | 'pro' | 'premium';
 
@@ -80,6 +80,7 @@ export interface Subscription {
  */
 export async function getSubscription(userId: string): Promise<Subscription | null> {
   try {
+    // use supabase-client for client-side usage
     const { data, error } = await supabase
       .from('subscriptions')
       .select('*')

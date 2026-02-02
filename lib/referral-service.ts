@@ -3,7 +3,7 @@
  * Generate referral codes, track referrals, award bonuses
  */
 
-import { supabase } from './supabase';
+import { supabase } from './supabase-client';
 import { addCredits } from './wallet-service';
 
 export interface ReferralLink {
@@ -45,6 +45,7 @@ export async function generateReferralCode(
     const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
     const code = `${userName.substring(0, 4).toUpperCase()}_${randomPart}`;
 
+    // use supabase-client for client-side usage
     const { data, error } = await supabase
       .from('referral_links')
       .insert({

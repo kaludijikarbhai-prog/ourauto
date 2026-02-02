@@ -6,15 +6,17 @@
  * TODO: Integrate with AI/ML service for price estimation
  */
 
-import { supabase } from '@/lib/supabase';
+// Removed unused import of supabase
 import type { ValuationRequest, ValuationResult } from './types';
+import { supabaseServer } from '@/lib/supabase-server';
 
 export async function getValuation(request: ValuationRequest): Promise<ValuationResult | null> {
   // This is a placeholder implementation
   // In production, integrate with an AI/ML model or external valuation API
   
   try {
-    // Using supabase directly
+
+    const supabase = supabaseServer;
     const { data, error } = await supabase
       .from('valuations')
       .select('*')
@@ -44,6 +46,7 @@ export async function createValuation(
   result: Omit<ValuationResult, 'id' | 'createdAt'>
 ): Promise<ValuationResult | null> {
   // Using supabase directly
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('valuations')
     .insert([{ ...request, ...result } as never])
@@ -59,6 +62,7 @@ export async function createValuation(
 
 export async function getListingValuation(listingId: string): Promise<ValuationResult | null> {
   // Using supabase directly
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('valuations')
     .select('*')

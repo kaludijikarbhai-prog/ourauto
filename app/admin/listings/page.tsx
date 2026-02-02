@@ -1,42 +1,51 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getAllListings, deleteListing } from "@/lib/admin-service"
 
 export default function ListingsPage() {
-  const [listings, setListings] = useState<any[]>([])
+  const [cars, setCars] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    load()
+    fetch("/api/admin/listings")
+      .then(res => res.json())
+      .then(data => {
+        setCars(data)
+        setLoading(false)
+      })
   }, [])
 
-  async function load() {
-    const { data } = await getAllListings()
-    setListings(data || [])
+  async function approve(id: string) {
+    await fetch("/api/admin/listings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id })
+    })
+
+    setCars(prev =>
+      prev.map(c => c.id === id ? { ...c, status: "approved" } : c)
+    )
   }
 
-  async function remove(id: string) {
-    await deleteListing(id)
-    load()
-  }
+  if (loading) return <p>Loading...</p>
 
   return (
-    <div>
-      <h1 className="text-xl font-bold mb-6">📦 Listings</h1>
+    <div className="p-6 space-y-3">
+      {cars.map(c => (
+        <div key={c.id} className="border p-3 flex justify-between">
+          <div>
+            <p>{c.brand} {c.model}</p>
+            <p className="text-sm text-gray-500">{c.city}</p>
+          </div>
 
-      {listings.map((c) => (
-        <div
-          key={c.id}
-          className="flex justify-between bg-white p-4 rounded shadow mb-3"
-        >
-          <span>{c.brand} {c.model}</span>
-
-          <button
-            onClick={() => remove(c.id)}
-            className="bg-red-600 text-white px-3 py-1 rounded"
-          >
-            Delete
-          </button>
+          {c.status !== "approved" && (
+            <button
+              onClick={() => approve(c.id)}
+              className="bg-green-600 text-white px-3 py-1 rounded"
+            >
+              Approve
+            </button>
+          )}
         </div>
       ))}
     </div>

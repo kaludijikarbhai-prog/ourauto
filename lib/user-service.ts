@@ -2,7 +2,7 @@
  * User side services (selling cars, wishlists, etc.)
  */
 
-import { supabase } from './supabase';
+import { supabase } from './supabase-client';
 import { getUser } from './auth';
 import {
   Car,
@@ -37,6 +37,7 @@ export async function createCarListing(input: {
       return { error: 'Not authenticated' };
     }
 
+    // use supabase-client for client-side usage
     const { data, error } = await supabase
       .from('cars')
       .insert([

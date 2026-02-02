@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAdmin, getAllReports, resolveReport } from '@/lib/admin-service';
+// All server logic moved to API route
 import { Report } from '@/lib/types';
 
 export default function AdminReportsPage() {
@@ -18,20 +18,28 @@ export default function AdminReportsPage() {
 
   const checkAndLoad = async () => {
     setLoading(true);
-    const admin = await isAdmin();
-    if (!admin) {
+    // Check admin status via API (could be improved with auth headers)
+    const res = await fetch('/api/admin/verify');
+    const admin = await res.json();
+    if (!admin?.isAdmin) {
       router.push('/home');
       return;
     }
 
     setAuthorized(true);
-    const data = await getAllReports();
+    // Fetch all reports
+    const reportsRes = await fetch('/api/admin/reports');
+    const data = await reportsRes.json();
     setReports(data.data || []);
     setLoading(false);
   };
 
   const handleResolveReport = async (reportId: string, status: 'resolved' | 'dismissed') => {
-    await resolveReport(reportId, status);
+    await fetch('/api/admin/reports', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reportId, status }),
+    });
     setReports(reports.map((r) => (r.id === reportId ? { ...r, status } : r)));
   };
 

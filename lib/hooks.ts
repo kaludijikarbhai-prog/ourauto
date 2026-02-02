@@ -6,7 +6,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { getUser, isAuthenticated } from '@/lib/auth';
 import { getUserWishlist, isInWishlist, addToWishlist, removeFromWishlist } from '@/lib/wishlist-service';
 import { WishlistWithCar } from '@/lib/types';
-import { supabase } from '@/lib/supabase';
 
 /**
  * Hook to check authentication

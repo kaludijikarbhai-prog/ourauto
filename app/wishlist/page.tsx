@@ -17,7 +17,19 @@ export default function WishlistPage() {
 
   const loadWishlist = async () => {
     setLoading(true);
-    const data = await getUserWishlist();
+    // Get userId from Supabase auth
+    const { createBrowserClient } = await import('@supabase/auth-helpers-nextjs');
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabase = createBrowserClient(supabaseUrl, supabaseKey);
+    const { data: authData } = await supabase.auth.getUser();
+    const userId = authData.user?.id;
+    if (!userId) {
+      setWishlist([]);
+      setLoading(false);
+      return;
+    }
+    const data = await getUserWishlist(userId);
     setWishlist(data);
     setLoading(false);
   };

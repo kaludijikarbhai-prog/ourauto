@@ -4,7 +4,7 @@
  * Enterprise-grade transaction logging
  */
 
-import { supabase } from './supabase';
+import { supabase } from './supabase-client';
 
 export interface Wallet {
   id: string;
@@ -41,6 +41,7 @@ export interface WalletTransaction {
  */
 export async function getWallet(userId: string): Promise<Wallet> {
   try {
+    // use supabase-client for client-side usage
     const { data, error } = await supabase
       .from('wallets')
       .select('*')

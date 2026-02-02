@@ -2,21 +2,38 @@
   "app/dealer/layout.tsx -> @/lib/supabase-client": {
     "id": 9203,
     "files": [
-      "static/chunks/4033-6f64c07ed11861ac.js",
-      "static/chunks/9203.7590f7167f4971fb.js"
+      "static/chunks/3053-8965276dfec6dfe8.js",
+      "static/chunks/9203.7f2e5ff28ed330d2.js"
+    ]
+  },
+  "app/inspection/book/page.tsx -> @supabase/auth-helpers-nextjs": {
+    "id": 3414,
+    "files": [
+      "static/chunks/3414.e9e0200fd7936efc.js"
+    ]
+  },
+  "app/my-inspections/page.tsx -> @supabase/auth-helpers-nextjs": {
+    "id": 3414,
+    "files": [
+      "static/chunks/3414.e9e0200fd7936efc.js"
     ]
   },
   "app/page.tsx -> @/lib/supabase-client": {
     "id": 9203,
     "files": [
-      "static/chunks/4033-6f64c07ed11861ac.js",
-      "static/chunks/9203.7590f7167f4971fb.js"
+      "static/chunks/3053-8965276dfec6dfe8.js",
+      "static/chunks/9203.7f2e5ff28ed330d2.js"
     ]
   },
-  "components/car-listing/AddCarForm.tsx -> @/lib/supabase": {
-    "id": 2141,
+  "app/wishlist/page.tsx -> @supabase/auth-helpers-nextjs": {
+    "id": 3414,
     "files": [
-      "static/chunks/2141.fd6532e1aa2351a0.js"
+      "static/chunks/3053-8965276dfec6dfe8.js",
+      "static/chunks/3414.e9e0200fd7936efc.js"
     ]
+  },
+  "components/car-listing/AddCarForm.tsx -> @/lib/supabase-client": {
+    "id": 9203,
+    "files": []
   }
 }

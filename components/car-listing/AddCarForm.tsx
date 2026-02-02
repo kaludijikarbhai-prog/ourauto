@@ -10,7 +10,7 @@ let supabase: any = null;
 
 const initSupabase = async () => {
   if (!supabase) {
-    const { supabase: sb } = await import('@/lib/supabase');
+    const { supabase: sb } = await import('@/lib/supabase-client');
     supabase = sb;
   }
   return supabase;

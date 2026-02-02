@@ -9,7 +9,7 @@
     ],
     "module": "ESNext",
     "skipLibCheck": true,
-    "esModuleInterop": true,
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "noUnusedLocals": true,
@@ -21,6 +21,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@supabase/supabase-js": [
+        "node_modules/@supabase/supabase-js/dist/module/index.js"
       ]
     },
     "resolveJsonModule": true,
@@ -28,7 +31,6 @@
     "declarationMap": true,
     "sourceMap": true,
     "incremental": true,
-    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "isolatedModules": true,
@@ -40,7 +42,8 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "esModuleInterop": true
   },
   "include": [
     "next-env.d.ts",

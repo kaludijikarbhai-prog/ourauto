@@ -4,12 +4,12 @@
  * Core functions for system administration
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase-server';
 import type { SystemStats, DealerVerificationRequest, ModerationAction } from './types';
 
 export async function getSystemStats(): Promise<SystemStats | null> {
   try {
-    // Using supabase directly
+    const supabase = supabaseServer;
     const [users, dealers, listings, transactions] = await Promise.all([
       supabase.from('users').select('*', { count: 'exact', head: true }),
       supabase.from('dealer_profiles').select('*', { count: 'exact', head: true }),
@@ -33,7 +33,7 @@ export async function getSystemStats(): Promise<SystemStats | null> {
 }
 
 export async function getVerificationRequests(): Promise<DealerVerificationRequest[]> {
-  // Using supabase directly
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('dealer_verification_requests')
     .select('*')
@@ -53,7 +53,7 @@ export async function reviewVerification(
   adminId: string,
   notes?: string
 ): Promise<DealerVerificationRequest | null> {
-  // Using supabase directly
+  const supabase = supabaseServer;
   const { data, error } = await supabase
     .from('dealer_verification_requests')
     .update({
@@ -81,8 +81,8 @@ export async function createModerationAction(
   adminId: string,
   expiresAt?: string
 ): Promise<ModerationAction | null> {
-  // Using supabase directly
-  const { data, error } = await supabase
+
+  const { data, error } = await supabaseServer
     .from('moderation_actions')
     .insert([
       {
@@ -105,8 +105,8 @@ export async function createModerationAction(
 }
 
 export async function getModerationHistory(targetId: string): Promise<ModerationAction[]> {
-  // Using supabase directly
-  const { data, error } = await supabase
+
+  const { data, error } = await supabaseServer
     .from('moderation_actions')
     .select('*')
     .eq('target_id', targetId)

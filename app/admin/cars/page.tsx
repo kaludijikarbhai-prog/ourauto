@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAdmin, getAllCars, setCarStatus } from '@/lib/admin-service';
+// All server logic moved to API route
 import { Car } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
 
@@ -19,20 +19,28 @@ export default function AdminCarsPage() {
 
   const checkAndLoad = async () => {
     setLoading(true);
-    const admin = await isAdmin();
-    if (!admin) {
+    // Check admin status via API (could be improved with auth headers)
+    const res = await fetch('/api/admin/verify');
+    const admin = await res.json();
+    if (!admin?.isAdmin) {
       router.push('/home');
       return;
     }
 
     setAuthorized(true);
-    const data = await getAllCars();
+    // Fetch all cars
+    const carsRes = await fetch('/api/admin/cars');
+    const data = await carsRes.json();
     setCars(data.data || []);
     setLoading(false);
   };
 
   const handleStatusChange = async (carId: string, newStatus: 'draft' | 'live' | 'sold') => {
-    await setCarStatus(carId, newStatus);
+    await fetch('/api/admin/cars', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ carId, newStatus }),
+    });
     setCars(cars.map((c) => (c.id === carId ? { ...c, status: newStatus } : c)));
   };
 

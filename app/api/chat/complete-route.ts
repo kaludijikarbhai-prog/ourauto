@@ -1,3 +1,4 @@
+
 /**
  * Masked Chat API - Lead Protection System
  * GET /api/chat - Get user's chats
@@ -8,10 +9,10 @@
  * GET /api/chat/:id/masked-numbers - Get masked phone numbers
  */
 
-import { createSupabaseServer } from '@/lib/supabase-server';
-
-const supabase = createSupabaseServer();
+import { supabaseServer } from '@/lib/supabase-server';
 import { NextRequest, NextResponse } from 'next/server';
+
+const supabase = supabaseServer;
 
 function maskPhone(phone: string): string {
   const cleaned = phone.replace(/\D/g, '');
@@ -106,23 +107,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get car and owner
 
-    import type { Database } from '@/lib/database.types';
-    type Car = Database['public']['Tables']['cars']['Row'] & { owner?: { phone?: string } };
+
+    // Get car and owner
     const { data, error: carError } = await supabase
       .from('cars')
       .select('*, owner:profiles!owner_id(*)')
       .eq('id', carId)
       .single();
-    const car = data as Car;
+    const car = data as any;
 
-    if (carError || !car) {
+    if (carError || car === null) {
       return NextResponse.json(
         { error: 'Car not found' },
         { status: 404 }
       );
     }
+
 
     // Get buyer profile
     const { data: buyer } = await supabase
@@ -131,14 +132,16 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
+
     // Check if chat already exists
+    type ChatRequestId = { id: string };
     const { data: existingChat } = await supabase
       .from('chat_requests')
       .select('id')
       .eq('car_id', carId)
       .eq('buyer_id', user.id)
-      .eq('seller_id', car.owner_id)
-      .maybeSingle();
+      .eq('seller_id', car.owner_id!)
+      .maybeSingle<ChatRequestId>();
 
     if (existingChat) {
       return NextResponse.json(
@@ -158,7 +161,7 @@ export async function POST(request: NextRequest) {
         {
           car_id: carId,
           buyer_id: user.id,
-          seller_id: car.owner_id,
+          seller_id: car.owner_id!,
           status: 'pending',
           masked_buyer_phone: maskedBuyerPhone,
           masked_seller_phone: maskedSellerPhone,

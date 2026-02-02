@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getAllUsers, banUser, unbanUser } from "@/lib/admin-service"
+// All server logic moved to API route
 
 export default function UsersPage() {
   const [users, setUsers] = useState<any[]>([])
@@ -11,17 +11,18 @@ export default function UsersPage() {
   }, [])
 
   async function load() {
-    const { data } = await getAllUsers()
-    setUsers(data || [])
+    const res = await fetch('/api/admin/users');
+    const { data } = await res.json();
+    setUsers(data || []);
   }
 
   async function toggleBan(user: any) {
-    if (user.banned) {
-      await unbanUser(user.id)
-    } else {
-      await banUser(user.id)
-    }
-    load()
+    await fetch('/api/admin/users', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id, banned: !user.banned }),
+    });
+    load();
   }
 
   return (

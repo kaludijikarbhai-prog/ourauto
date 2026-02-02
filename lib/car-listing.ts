@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase } from './supabase-client';
 import { getUser } from './auth';
 
 export interface CarListingInput {
